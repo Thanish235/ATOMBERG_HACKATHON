@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: atomquest-goal-portal
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    disk:
+      name: atomquest-db
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: DB_DIR
+        value: /var/data
+      - key: SECRET_KEY
+        generateValue: true

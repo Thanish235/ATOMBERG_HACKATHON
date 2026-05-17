@@ -1,0 +1,2629 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AtomQuest — Goal Setting & Tracking Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0b0e17;
+        --surface: #12172a;
+        --surface2: #1a2035;
+        --border: #252d45;
+        --accent: #4f7cff;
+        --accent2: #00d4aa;
+        --accent3: #ff6b6b;
+        --accent4: #ffd166;
+        --text: #e8eaf6;
+        --text2: #8892b0;
+        --text3: #4a5568;
+        --success: #00d4aa;
+        --warning: #ffd166;
+        --danger: #ff6b6b;
+        --info: #4f7cff;
+        --radius: 12px;
+        --radius-sm: 8px;
+      }
+
+      /* ── Light Mode ─────────────────────────────────────────── */
+      html.light {
+        --bg: #f0f2f8;
+        --surface: #ffffff;
+        --surface2: #f5f7ff;
+        --border: #dde1f0;
+        --accent: #3d6bef;
+        --accent2: #00b894;
+        --accent3: #e05c5c;
+        --accent4: #e6a817;
+        --text: #1a1f3c;
+        --text2: #5a6484;
+        --text3: #9aa0b8;
+        --success: #00b894;
+        --warning: #e6a817;
+        --danger: #e05c5c;
+        --info: #3d6bef;
+        --radius: 12px;
+        --radius-sm: 8px;
+      }
+
+      /* ── Theme Toggle ────────────────────────────────────────── */
+      .theme-toggle {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: var(--surface2);
+        cursor: pointer;
+        font-size: 13px;
+        color: var(--text2);
+        transition: all 0.2s;
+        user-select: none;
+        flex-shrink: 0;
+      }
+      .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+      .theme-toggle .toggle-track {
+        width: 32px; height: 18px;
+        background: var(--border);
+        border-radius: 9px;
+        position: relative;
+        transition: background 0.25s;
+      }
+      html.light .theme-toggle .toggle-track { background: var(--accent); }
+      .theme-toggle .toggle-thumb {
+        width: 12px; height: 12px;
+        background: var(--text2);
+        border-radius: 50%;
+        position: absolute;
+        top: 3px; left: 3px;
+        transition: left 0.25s, background 0.25s;
+      }
+      html.light .theme-toggle .toggle-thumb {
+        left: 17px;
+        background: #fff;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      /* ── Login ─────────────────────────────────────────────── */
+      #login-screen {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background:
+          radial-gradient(ellipse at 30% 20%, #1a2a6c22 0%, transparent 60%),
+          radial-gradient(ellipse at 80% 80%, #00d4aa11 0%, transparent 50%),
+          var(--bg);
+      }
+
+      .login-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 48px 36px;
+        width: 420px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .login-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+      }
+
+      .logo {
+        font-family: "Space Mono", monospace;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 4px;
+        color: var(--accent2);
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+
+      .login-card h1 {
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 8px;
+      }
+
+      .login-card p {
+        color: var(--text2);
+        margin-bottom: 32px;
+        font-size: 13px;
+      }
+
+      .quick-logins {
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+
+      .quick-btn {
+        flex: 1 1 0;
+        min-width: 0;
+        overflow: hidden;
+        padding: 8px 6px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        background: var(--surface2);
+        color: var(--text2);
+        cursor: pointer;
+        font-size: 11px;
+        font-family: "DM Sans", sans-serif;
+        transition: all 0.2s;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+      }
+      .quick-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .quick-btn span {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+        font-size: 9px;
+        opacity: 0.6;
+      }
+
+      label {
+        display: block;
+        color: var(--text2);
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 6px;
+        letter-spacing: 0.5px;
+      }
+
+      input[type="email"],
+      input[type="password"],
+      input[type="text"],
+      input[type="number"],
+      input[type="date"],
+      select,
+      textarea {
+        width: 100%;
+        padding: 11px 14px;
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text);
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--accent);
+      }
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+      select option {
+        background: var(--surface2);
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 20px;
+        border-radius: var(--radius-sm);
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        text-decoration: none;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: white;
+      }
+      .btn-primary:hover {
+        background: #3d6bef;
+        transform: translateY(-1px);
+      }
+      .btn-success {
+        background: var(--success);
+        color: #0b0e17;
+      }
+      .btn-success:hover {
+        opacity: 0.9;
+      }
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+      }
+      .btn-danger:hover {
+        opacity: 0.9;
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--text2);
+        border: 1px solid var(--border);
+      }
+      .btn-ghost:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .btn-warning {
+        background: var(--warning);
+        color: #0b0e17;
+      }
+      .btn-sm {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+      .btn-full {
+        width: 100%;
+        justify-content: center;
+      }
+      .btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      /* ── Layout ────────────────────────────────────────────── */
+      #app-screen {
+        display: none;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .topbar {
+        height: 58px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+        gap: 16px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .topbar-logo {
+        font-family: "Space Mono", monospace;
+        font-weight: 700;
+        font-size: 13px;
+        color: var(--accent2);
+        letter-spacing: 2px;
+      }
+
+      .topbar-nav {
+        display: flex;
+        gap: 4px;
+        margin-left: 24px;
+      }
+
+      .nav-item {
+        padding: 6px 14px;
+        border-radius: 6px;
+        color: var(--text2);
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.2s;
+        border: none;
+        background: transparent;
+        font-family: "DM Sans", sans-serif;
+      }
+      .nav-item:hover {
+        color: var(--text);
+        background: var(--surface2);
+      }
+      .nav-item.active {
+        color: var(--accent);
+        background: #4f7cff18;
+      }
+
+      .topbar-right {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .notif-btn {
+        position: relative;
+        cursor: pointer;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text2);
+        font-size: 16px;
+        transition: all 0.2s;
+      }
+      .notif-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      .notif-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        width: 16px;
+        height: 16px;
+        background: var(--danger);
+        border-radius: 50%;
+        font-size: 9px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+      }
+
+      .user-pill {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 14px 6px 8px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        cursor: pointer;
+      }
+
+      .avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        color: white;
+      }
+
+      .avatar-admin {
+        background: linear-gradient(135deg, #ff6b6b, #ee0979);
+      }
+      .avatar-manager {
+        background: linear-gradient(135deg, #4f7cff, #00d4aa);
+      }
+      .avatar-employee {
+        background: linear-gradient(135deg, #ffd166, #f97316);
+      }
+
+      .role-badge {
+        font-family: "Space Mono", monospace;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 2px 8px;
+        border-radius: 4px;
+      }
+      .role-admin {
+        background: #ff6b6b22;
+        color: var(--danger);
+      }
+      .role-manager {
+        background: #4f7cff22;
+        color: var(--accent);
+      }
+      .role-employee {
+        background: #ffd16622;
+        color: var(--warning);
+      }
+
+      .main-content {
+        flex: 1 1 0;
+        min-width: 0;
+        overflow: hidden;
+        padding: 28px 28px;
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      /* ── Page Headers ──────────────────────────────────────── */
+      .page-header {
+        margin-bottom: 28px;
+      }
+      .page-header h2 {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .page-header p {
+        color: var(--text2);
+        font-size: 13px;
+      }
+
+      /* ── Cards ─────────────────────────────────────────────── */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px;
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+
+      .card-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      /* ── Stats Grid ────────────────────────────────────────── */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 28px;
+      }
+
+      .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+      }
+      .stat-card.blue::after {
+        background: var(--accent);
+      }
+      .stat-card.green::after {
+        background: var(--accent2);
+      }
+      .stat-card.yellow::after {
+        background: var(--warning);
+      }
+      .stat-card.red::after {
+        background: var(--danger);
+      }
+
+      .stat-icon {
+        font-size: 22px;
+        margin-bottom: 10px;
+      }
+      .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        font-family: "Space Mono", monospace;
+      }
+      .stat-label {
+        color: var(--text2);
+        font-size: 12px;
+        margin-top: 4px;
+      }
+
+      /* ── Goals Grid/List ───────────────────────────────────── */
+      .goals-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        gap: 16px;
+      }
+
+      .goal-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+        transition:
+          border-color 0.2s,
+          transform 0.2s;
+        cursor: pointer;
+      }
+      .goal-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+      }
+
+      .goal-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+      }
+      .goal-thrust {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: var(--accent2);
+      }
+      .goal-weight {
+        font-family: "Space Mono", monospace;
+        font-size: 11px;
+        color: var(--text2);
+      }
+
+      .goal-title {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      .goal-desc {
+        font-size: 12px;
+        color: var(--text2);
+        margin-bottom: 14px;
+        line-height: 1.5;
+      }
+
+      .goal-meta {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .status-badge {
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .status-draft {
+        background: #4a556822;
+        color: var(--text2);
+        border: 1px solid var(--border);
+      }
+      .status-submitted {
+        background: #4f7cff22;
+        color: var(--accent);
+        border: 1px solid #4f7cff44;
+      }
+      .status-approved {
+        background: #00d4aa22;
+        color: var(--success);
+        border: 1px solid #00d4aa44;
+      }
+      .status-returned {
+        background: #ff6b6b22;
+        color: var(--danger);
+        border: 1px solid #ff6b6b44;
+      }
+
+      .uom-badge {
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-family: "Space Mono", monospace;
+        font-weight: 700;
+        text-transform: uppercase;
+        background: var(--surface2);
+        color: var(--text2);
+      }
+
+      .progress-bar-wrap {
+        margin-top: 12px;
+      }
+      .progress-bar-track {
+        height: 4px;
+        background: var(--surface2);
+        border-radius: 2px;
+        overflow: hidden;
+      }
+      .progress-bar-fill {
+        height: 100%;
+        border-radius: 2px;
+        transition: width 0.5s;
+      }
+      .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 4px;
+        font-size: 10px;
+        color: var(--text2);
+      }
+
+      /* ── Modal ─────────────────────────────────────────────── */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(4px);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .modal {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        width: 100%;
+        max-width: 600px;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      .modal-header {
+        padding: 22px 24px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .modal-header h3 {
+        font-size: 17px;
+        font-weight: 700;
+      }
+      .modal-close {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        color: var(--text2);
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .modal-body {
+        padding: 0 24px 24px;
+      }
+      .modal-footer {
+        padding: 16px 24px 24px;
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        border-top: 1px solid var(--border);
+      }
+
+      /* ── Table ─────────────────────────────────────────────── */
+      .table-wrap {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th {
+        text-align: left;
+        padding: 10px 14px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: var(--text2);
+        border-bottom: 1px solid var(--border);
+      }
+      td {
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+        vertical-align: middle;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      tr:hover td {
+        background: var(--surface2);
+      }
+
+      /* ── Weightage Indicator ───────────────────────────────── */
+      .weight-indicator {
+        background: var(--surface2);
+        border-radius: var(--radius-sm);
+        padding: 14px;
+        margin-bottom: 16px;
+      }
+      .weight-bar {
+        height: 8px;
+        background: var(--surface);
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 8px 0 4px;
+      }
+      .weight-fill {
+        height: 100%;
+        border-radius: 4px;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        transition: width 0.3s;
+      }
+      .weight-fill.over {
+        background: var(--danger);
+      }
+
+      /* ── Checkin Quarter Tabs ──────────────────────────────── */
+      .quarter-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+      .q-tab {
+        padding: 8px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        color: var(--text2);
+        font-size: 13px;
+        font-weight: 600;
+        transition: all 0.2s;
+        font-family: "Space Mono", monospace;
+      }
+      .q-tab.active {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+      }
+      .q-tab:hover:not(.active) {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+
+      /* ── Notification Panel ────────────────────────────────── */
+      .notif-panel {
+        position: fixed;
+        top: 66px;
+        right: 16px;
+        width: 360px;
+        max-height: 480px;
+        overflow-y: auto;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        z-index: 200;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      }
+
+      .notif-panel-header {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        background: var(--surface);
+      }
+
+      .notif-item {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      .notif-item:hover {
+        background: var(--surface2);
+      }
+      .notif-item.unread {
+        border-left: 3px solid var(--accent);
+      }
+      .notif-item-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 3px;
+      }
+      .notif-item-msg {
+        font-size: 12px;
+        color: var(--text2);
+      }
+      .notif-item-time {
+        font-size: 10px;
+        color: var(--text3);
+        margin-top: 4px;
+      }
+
+      /* ── Analytics ─────────────────────────────────────────── */
+      .chart-container {
+        position: relative;
+        width: 100%;
+      }
+      .bar-chart {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+        height: 180px;
+        padding: 10px 0;
+      }
+      .bar-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        flex: 1 1 0;
+        min-width: 0;
+        overflow: hidden;
+      }
+      .bar {
+        border-radius: 6px 6px 0 0;
+        width: 100%;
+        min-width: 30px;
+        transition: opacity 0.2s;
+      }
+      .bar:hover {
+        opacity: 0.8;
+      }
+      .bar-label {
+        font-size: 11px;
+        color: var(--text2);
+        text-align: center;
+      }
+      .bar-val {
+        font-size: 10px;
+        font-family: "Space Mono", monospace;
+        color: var(--text2);
+      }
+
+      /* ── Two-col layout ────────────────────────────────────── */
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 20px;
+      }
+
+      /* ── Alert ─────────────────────────────────────────────── */
+      .alert {
+        padding: 12px 16px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        margin-bottom: 14px;
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+      }
+      .alert-info {
+        background: #4f7cff18;
+        border: 1px solid #4f7cff44;
+        color: #90abff;
+      }
+      .alert-success {
+        background: #00d4aa18;
+        border: 1px solid #00d4aa44;
+        color: #5de8cc;
+      }
+      .alert-warning {
+        background: #ffd16618;
+        border: 1px solid #ffd16644;
+        color: #ffe490;
+      }
+      .alert-danger {
+        background: #ff6b6b18;
+        border: 1px solid #ff6b6b44;
+        color: #ff9999;
+      }
+
+      .toast-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .toast {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px 18px;
+        font-size: 13px;
+        min-width: 280px;
+        animation: slideIn 0.3s ease;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      }
+      .toast.success {
+        border-left: 3px solid var(--success);
+      }
+      .toast.error {
+        border-left: 3px solid var(--danger);
+      }
+      .toast.info {
+        border-left: 3px solid var(--accent);
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(40px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 48px 20px;
+        color: var(--text2);
+      }
+      .empty-state .empty-icon {
+        font-size: 40px;
+        margin-bottom: 12px;
+      }
+      .empty-state h3 {
+        color: var(--text);
+        font-size: 16px;
+        margin-bottom: 6px;
+      }
+
+      .separator {
+        height: 1px;
+        background: var(--border);
+        margin: 16px 0;
+      }
+
+      .locked-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        color: var(--text3);
+      }
+      .score-pill {
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        font-family: "Space Mono", monospace;
+      }
+
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 13px;
+      }
+      .detail-row:last-child {
+        border-bottom: none;
+      }
+      .detail-key {
+        color: var(--text2);
+      }
+      .detail-val {
+        font-weight: 600;
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--surface);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* Switch role banner */
+      .switch-bar {
+        background: #ffd16618;
+        border-bottom: 1px solid #ffd16633;
+        padding: 8px 24px;
+        font-size: 12px;
+        color: var(--warning);
+        display: flex;
+        gap: 16px;
+        align-items: center;
+      }
+      .switch-bar a {
+        color: var(--accent);
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ═══════════════════════════════ LOGIN ═══════════════════════════════════ -->
+    <div id="login-screen">
+      <div class="login-card">
+        <div class="logo">⬡ AtomQuest</div>
+        <h1>Goal Portal</h1>
+        <p>Sign in to manage your goals and track performance</p>
+
+        <div class="quick-logins">
+          <button
+            class="quick-btn"
+            onclick="quickLogin('admin@atomquest.com', 'admin123')"
+          >
+            🛡️ Admin<span>admin@atomquest.com</span>
+          </button>
+          <button
+            class="quick-btn"
+            onclick="quickLogin('manager@atomquest.com', 'manager123')"
+          >
+            👤 Manager<span>manager@atomquest.com</span>
+          </button>
+          <button
+            class="quick-btn"
+            onclick="quickLogin('employee@atomquest.com', 'employee123')"
+          >
+            ✦ Employee<span>employee@atomquest.com</span>
+          </button>
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <input
+            type="email"
+            id="login-email"
+            placeholder="you@atomquest.com"
+          />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input
+            type="password"
+            id="login-password"
+            placeholder="••••••••"
+            onkeydown="if (event.key === 'Enter') doLogin();"
+          />
+        </div>
+        <div id="login-error" class="alert alert-danger hidden"></div>
+        <button
+          class="btn btn-primary btn-full"
+          onclick="doLogin()"
+          id="login-btn"
+        >
+          Sign In
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════ APP ══════════════════════════════════════ -->
+    <div id="app-screen">
+      <div class="topbar">
+        <div class="topbar-logo">⬡ ATOMQUEST</div>
+        <nav class="topbar-nav" id="topbar-nav"></nav>
+        <div class="topbar-right">
+          <div class="theme-toggle" onclick="toggleTheme()" title="Toggle dark/light mode">
+            <span id="theme-icon">🌙</span>
+            <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          </div>
+          <div class="notif-btn" onclick="toggleNotifications()" id="notif-btn">
+            🔔
+            <span class="notif-badge hidden" id="notif-badge">0</span>
+          </div>
+          <div class="user-pill" id="user-pill"></div>
+          <button class="btn btn-ghost btn-sm" onclick="doLogout()">
+            Sign out
+          </button>
+        </div>
+      </div>
+
+      <div class="main-content" id="main-content">
+        <div class="empty-state">
+          <div class="empty-icon">⏳</div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Panel -->
+    <div id="notif-panel" class="notif-panel hidden">
+      <div class="notif-panel-header">
+        <span style="font-weight: 600; font-size: 14px">Notifications</span>
+        <button class="btn btn-ghost btn-sm" onclick="markAllRead()">
+          Mark all read
+        </button>
+      </div>
+      <div id="notif-list"></div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Goal Detail Modal -->
+    <div id="goal-modal" class="modal-overlay hidden">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 id="goal-modal-title">Goal Details</h3>
+          <button class="modal-close" onclick="closeModal('goal-modal')">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body" id="goal-modal-body"></div>
+      </div>
+    </div>
+
+    <!-- Create/Edit Goal Modal -->
+    <div id="edit-goal-modal" class="modal-overlay hidden">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 id="edit-goal-title">Create Goal</h3>
+          <button class="modal-close" onclick="closeModal('edit-goal-modal')">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body" id="edit-goal-body"></div>
+      </div>
+    </div>
+
+    <!-- Checkin Modal -->
+    <div id="checkin-modal" class="modal-overlay hidden">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 id="checkin-modal-title">Log Achievement</h3>
+          <button class="modal-close" onclick="closeModal('checkin-modal')">
+            ✕
+          </button>
+        </div>
+        <div class="modal-body" id="checkin-modal-body"></div>
+        <div class="modal-footer" id="checkin-modal-footer"></div>
+      </div>
+    </div>
+
+    <script>
+      const API = 'http://localhost:8000/api';
+      let token = localStorage.getItem('aq_token');
+      let currentUser = JSON.parse(localStorage.getItem('aq_user') || 'null');
+      let allGoals = [];
+      let allNotifications = [];
+
+      // ── Auth ──────────────────────────────────────────────────────────────────
+      async function api(method, path, body, raw = false) {
+        const opts = {
+          method,
+          headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }
+        };
+        if (body) opts.body = JSON.stringify(body);
+        let res;
+        try {
+          res = await fetch(API + path, opts);
+        } catch (networkErr) {
+          throw new Error('Cannot reach server. Is the backend running on port 8000?');
+        }
+        // Only auto-logout on 401 if the user was already logged in (not during login itself)
+        if (res.status === 401 && token) { doLogout(); return; }
+        if (raw) return res;
+        const data = await res.json();
+        if (!res.ok) {
+          const detail = data.detail;
+          throw new Error(Array.isArray(detail) ? detail.map(d => d.msg).join(', ') : (detail || `Error ${res.status}`));
+        }
+        return data;
+      }
+
+      function quickLogin(email, password) {
+        document.getElementById('login-email').value = email;
+        document.getElementById('login-password').value = password;
+        doLogin();
+      }
+
+      async function doLogin() {
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+        const errEl = document.getElementById('login-error');
+        errEl.classList.add('hidden');
+        document.getElementById('login-btn').disabled = true;
+        document.getElementById('login-btn').textContent = 'Signing in…';
+        try {
+          console.log('[doLogin] Attempting login for:', email);
+          console.log('[doLogin] POST', API + '/auth/token');
+          const res = await fetch(API + '/auth/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+          console.log('[doLogin] Response status:', res.status);
+          const data = await res.json();
+          console.log('[doLogin] Response data:', JSON.stringify(data));
+          if (!res.ok) {
+            const detail = data.detail;
+            throw new Error(Array.isArray(detail) ? detail.map(d => d.msg).join(', ') : (detail || `Server error ${res.status}`));
+          }
+          if (!data.access_token) throw new Error('No token in response: ' + JSON.stringify(data));
+          token = data.access_token;
+          currentUser = data.user;
+          localStorage.setItem('aq_token', token);
+          localStorage.setItem('aq_user', JSON.stringify(currentUser));
+          console.log('[doLogin] Success! User:', currentUser.name, currentUser.role);
+          showApp();
+        } catch (e) {
+          console.error('[doLogin] Error:', e);
+          errEl.textContent = e.message;
+          errEl.classList.remove('hidden');
+        } finally {
+          document.getElementById('login-btn').disabled = false;
+          document.getElementById('login-btn').textContent = 'Sign In';
+        }
+      }
+
+      function doLogout() {
+        token = null; currentUser = null;
+        localStorage.removeItem('aq_token');
+        localStorage.removeItem('aq_user');
+        document.getElementById('login-screen').style.display = 'flex';
+        document.getElementById('app-screen').style.display = 'none';
+        document.getElementById('login-email').value = '';
+        document.getElementById('login-password').value = '';
+      }
+
+      // ── App Init ──────────────────────────────────────────────────────────────
+      function showApp() {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app-screen').style.display = 'flex';
+        document.getElementById('app-screen').style.flexDirection = 'column';
+
+        // User pill
+        const roleClass = `avatar-${currentUser.role}`;
+        const initials = currentUser.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+        document.getElementById('user-pill').innerHTML = `
+          <div class="avatar ${roleClass}">${initials}</div>
+          <span style="font-size:13px;font-weight:600">${currentUser.name}</span>
+          <span class="role-badge role-${currentUser.role}">${currentUser.role}</span>
+        `;
+
+        // Nav
+        const navItems = getNavItems();
+        document.getElementById('topbar-nav').innerHTML = navItems.map(n =>
+          `<button class="nav-item" data-page="${n.id}" onclick="navigate('${n.id}')">${n.label}</button>`
+        ).join('');
+
+        loadNotifications();
+        navigate('dashboard');
+      }
+
+      function getNavItems() {
+        const base = [{ id: 'dashboard', label: '⬡ Dashboard' }, { id: 'goals', label: '🎯 Goals' }];
+        if (currentUser.role === 'manager' || currentUser.role === 'admin') {
+          base.push({ id: 'approvals', label: '✅ Approvals' });
+          base.push({ id: 'team', label: '👥 Team' });
+          base.push({ id: 'analytics', label: '📊 Analytics' });
+        }
+        if (currentUser.role === 'admin') {
+          base.push({ id: 'escalation', label: '⚠️ Escalation' });
+          base.push({ id: 'integrations', label: '📡 Integrations' });
+          base.push({ id: 'admin', label: '🛡️ Admin' });
+        }
+        base.push({ id: 'reports', label: '📋 Reports' });
+        return base;
+      }
+
+      function navigate(page) {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.page === page));
+        document.getElementById('notif-panel').classList.add('hidden');
+        renderPage(page);
+      }
+
+      // ── Notifications ─────────────────────────────────────────────────────────
+      async function loadNotifications() {
+        try {
+          allNotifications = await api('GET', '/notifications');
+          const unread = allNotifications.filter(n => !n.is_read).length;
+          const badge = document.getElementById('notif-badge');
+          badge.textContent = unread;
+          badge.classList.toggle('hidden', unread === 0);
+        } catch(e) {}
+      }
+
+      function toggleNotifications() {
+        const panel = document.getElementById('notif-panel');
+        panel.classList.toggle('hidden');
+        if (!panel.classList.contains('hidden')) renderNotifications();
+      }
+
+      function renderNotifications() {
+        const el = document.getElementById('notif-list');
+        if (!allNotifications.length) {
+          el.innerHTML = '<div class="empty-state" style="padding:24px"><p>No notifications</p></div>';
+          return;
+        }
+        el.innerHTML = allNotifications.map(n => `
+          <div class="notif-item ${n.is_read ? '' : 'unread'}" onclick="readNotif(${n.id})">
+            <div class="notif-item-title">${n.title}</div>
+            <div class="notif-item-msg">${n.message}</div>
+            <div class="notif-item-time">${timeAgo(n.created_at)}</div>
+          </div>
+        `).join('');
+      }
+
+      async function readNotif(id) {
+        await api('POST', `/notifications/${id}/read`);
+        loadNotifications();
+        renderNotifications();
+      }
+
+      async function markAllRead() {
+        await api('POST', '/notifications/read-all');
+        await loadNotifications();
+        renderNotifications();
+      }
+
+      // ── Pages ─────────────────────────────────────────────────────────────────
+      async function renderPage(page) {
+        const el = document.getElementById('main-content');
+        el.innerHTML = `<div class="empty-state"><div class="empty-icon">⏳</div><p>Loading…</p></div>`;
+        try {
+          if (page === 'dashboard') await renderDashboard(el);
+          else if (page === 'goals') await renderGoals(el);
+          else if (page === 'approvals') await renderApprovals(el);
+          else if (page === 'team') await renderTeam(el);
+          else if (page === 'analytics') await renderAnalytics(el);
+          else if (page === 'escalation') await renderEscalation(el);
+          else if (page === 'integrations') await renderIntegrations(el);
+          else if (page === 'admin') await renderAdmin(el);
+          else if (page === 'reports') await renderReports(el);
+        } catch(e) {
+          el.innerHTML = `<div class="alert alert-danger">Error loading page: ${e.message}</div>`;
+        }
+      }
+
+      // ── DASHBOARD ─────────────────────────────────────────────────────────────
+      async function renderDashboard(el) {
+        const stats = await api('GET', '/reports/dashboard');
+        const role = currentUser.role;
+
+        let html = `<div class="page-header"><h2>Welcome back, ${currentUser.name.split(' ')[0]} 👋</h2><p>Here's your performance overview</p></div>`;
+
+        if (role === 'employee') {
+          const pct = stats.avg_progress || 0;
+          html += `
+          <div class="stats-grid">
+            <div class="stat-card blue"><div class="stat-icon">🎯</div><div class="stat-value">${stats.total_goals}</div><div class="stat-label">Total Goals</div></div>
+            <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-value">${stats.approved_goals}</div><div class="stat-label">Approved Goals</div></div>
+            <div class="stat-card yellow"><div class="stat-icon">📊</div><div class="stat-value">${stats.total_checkins}</div><div class="stat-label">Check-ins Done</div></div>
+            <div class="stat-card ${pct >= 80 ? 'green' : pct >= 50 ? 'yellow' : 'red'}"><div class="stat-icon">⚡</div><div class="stat-value">${pct}%</div><div class="stat-label">Avg Progress Score</div></div>
+          </div>`;
+          // Goals by status donut-style
+          const byStatus = stats.goals_by_status || {};
+          html += `<div class="grid-2"><div class="card"><div class="card-header"><div class="card-title">Goals by Status</div></div>
+            ${Object.entries(byStatus).map(([s, c]) => `
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+                <span class="status-badge status-${s}">${s}</span>
+                <div class="progress-bar-track" style="flex:1"><div class="progress-bar-fill" style="width:${(c/(stats.total_goals||1))*100}%;background:var(--accent)"></div></div>
+                <span style="font-family:'Space Mono',monospace;font-size:12px">${c}</span>
+              </div>`).join('')}
+          </div>
+          <div class="card"><div class="card-header"><div class="card-title">Check-ins by Quarter</div></div>
+            ${['Q1','Q2','Q3','Q4'].map(q => {
+              const c = (stats.checkins_by_quarter || {})[q] || 0;
+              return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+                <span style="font-family:'Space Mono',monospace;font-size:12px;width:24px;color:var(--text2)">${q}</span>
+                <div class="progress-bar-track" style="flex:1"><div class="progress-bar-fill" style="width:${c*20}%;background:var(--accent2)"></div></div>
+                <span style="font-family:'Space Mono',monospace;font-size:12px">${c}</span>
+              </div>`;
+            }).join('')}
+          </div></div>`;
+        } else if (role === 'manager') {
+          html += `<div class="stats-grid">
+            <div class="stat-card blue"><div class="stat-icon">👥</div><div class="stat-value">${stats.team_size}</div><div class="stat-label">Team Members</div></div>
+            <div class="stat-card yellow"><div class="stat-icon">⏳</div><div class="stat-value">${stats.pending_approvals}</div><div class="stat-label">Pending Approvals</div></div>
+            <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-value">${stats.approved_goals}</div><div class="stat-label">Approved Goals</div></div>
+            <div class="stat-card blue"><div class="stat-icon">📊</div><div class="stat-value">${stats.total_checkins}</div><div class="stat-label">Team Check-ins</div></div>
+          </div>
+          <div class="card"><div class="card-header"><div class="card-title">Team Progress</div></div>
+            <div class="table-wrap"><table><thead><tr><th>Member</th><th>Approved Goals</th><th>Avg Progress</th></tr></thead><tbody>
+              ${(stats.team_progress||[]).map(m => `
+                <tr><td><strong>${m.name}</strong></td><td>${m.approved_goals}</td>
+                <td><div style="display:flex;align-items:center;gap:10px">
+                  <div class="progress-bar-track" style="width:120px"><div class="progress-bar-fill" style="width:${Math.min(m.avg_progress,100)}%;background:${m.avg_progress>=80?'var(--success)':m.avg_progress>=50?'var(--warning)':'var(--danger)'}"></div></div>
+                  <span style="font-family:'Space Mono',monospace;font-size:12px">${m.avg_progress}%</span>
+                </div></td></tr>`).join('')}
+            </tbody></table></div>
+          </div>`;
+        } else {
+          html += `<div class="stats-grid">
+            <div class="stat-card blue"><div class="stat-icon">👥</div><div class="stat-value">${stats.total_employees}</div><div class="stat-label">Employees</div></div>
+            <div class="stat-card blue"><div class="stat-icon">🎯</div><div class="stat-value">${stats.total_goals}</div><div class="stat-label">Total Goals</div></div>
+            <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-value">${stats.approved_goals}</div><div class="stat-label">Approved Goals</div></div>
+            <div class="stat-card yellow"><div class="stat-icon">⏳</div><div class="stat-value">${stats.submitted_goals}</div><div class="stat-label">Pending Approval</div></div>
+          </div>
+          <div class="grid-2">
+            <div class="card"><div class="card-header"><div class="card-title">Completion Rate</div></div>
+              <div style="text-align:center;padding:20px">
+                <div style="font-size:52px;font-weight:700;font-family:'Space Mono',monospace;color:var(--accent)">${stats.completion_rate}%</div>
+                <div style="color:var(--text2);margin-top:8px">of goals approved org-wide</div>
+              </div>
+            </div>
+            <div class="card"><div class="card-header"><div class="card-title">Department Breakdown</div></div>
+              ${(stats.dept_breakdown||[]).map(d => `
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                  <span style="font-size:13px">${d.department}</span>
+                  <div style="display:flex;gap:12px">
+                    <span style="color:var(--text2);font-size:12px">👥 ${d.employees}</span>
+                    <span style="color:var(--text2);font-size:12px">🎯 ${d.goals}</span>
+                  </div>
+                </div>`).join('')}
+            </div>
+          </div>`;
+        }
+
+        el.innerHTML = html;
+      }
+
+      // ── GOALS PAGE ────────────────────────────────────────────────────────────
+      async function renderGoals(el) {
+        allGoals = await api('GET', '/goals');
+        const canCreate = currentUser.role === 'employee';
+
+        // Compute total weightage
+        const myGoals = allGoals.filter(g => g.owner_id === currentUser.id && g.status !== 'returned');
+        const totalWeight = myGoals.reduce((s, g) => s + g.weightage, 0);
+
+        let html = `<div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div><h2>My Goals</h2><p>Manage your goal sheet for this cycle</p></div>
+          ${canCreate ? `<button class="btn btn-primary" onclick="openCreateGoal()">+ New Goal</button>` : ''}
+        </div>`;
+
+        if (canCreate) {
+          const pct = Math.min(totalWeight, 100);
+          const over = totalWeight > 100;
+          html += `<div class="weight-indicator">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-size:12px;color:var(--text2);font-weight:600">TOTAL WEIGHTAGE</span>
+              <span style="font-family:'Space Mono',monospace;font-size:13px;color:${over ? 'var(--danger)' : totalWeight === 100 ? 'var(--success)' : 'var(--text)'}">${totalWeight.toFixed(1)}% / 100%</span>
+            </div>
+            <div class="weight-bar"><div class="weight-fill ${over ? 'over' : ''}" style="width:${pct}%"></div></div>
+            <div style="font-size:11px;color:${over ? 'var(--danger)' : totalWeight === 100 ? 'var(--success)' : 'var(--text2)'}">
+              ${over ? '⚠️ Weightage exceeds 100%' : totalWeight === 100 ? '✅ Weightage balanced — ready to submit' : `${(100 - totalWeight).toFixed(1)}% remaining to allocate`}
+            </div>
+          </div>`;
+        }
+
+        // Filter controls
+        const statuses = ['all', 'draft', 'submitted', 'approved', 'returned'];
+        html += `<div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+          ${statuses.map(s => `<button class="q-tab ${s === 'all' ? 'active' : ''}" onclick="filterGoals('${s}', this)">${s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}</button>`).join('')}
+        </div>`;
+
+        if (!allGoals.length) {
+          html += `<div class="empty-state"><div class="empty-icon">🎯</div><h3>No goals yet</h3><p>Create your first goal to get started</p>${canCreate ? '<br><button class="btn btn-primary" onclick="openCreateGoal()">Create Goal</button>' : ''}</div>`;
+        } else {
+          html += `<div class="goals-grid" id="goals-grid">${allGoals.map(goalCard).join('')}</div>`;
+        }
+
+        el.innerHTML = html;
+      }
+
+      function filterGoals(status, btn) {
+        document.querySelectorAll('.q-tab').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        const grid = document.getElementById('goals-grid');
+        if (!grid) return;
+        const filtered = status === 'all' ? allGoals : allGoals.filter(g => g.status === status);
+        grid.innerHTML = filtered.length ? filtered.map(goalCard).join('') : '<div class="empty-state"><p>No goals with this status</p></div>';
+      }
+
+      function goalCard(g) {
+        const latestCheckin = g.checkins?.slice().sort((a,b) => b.quarter > a.quarter ? 1 : -1)[0];
+        const score = latestCheckin?.progress_score;
+        const scoreColor = score >= 80 ? 'var(--success)' : score >= 50 ? 'var(--warning)' : 'var(--danger)';
+        return `<div class="goal-card" onclick="openGoalDetail(${g.id})">
+          <div class="goal-card-top">
+            <span class="goal-thrust">${g.thrust_area}</span>
+            <span class="goal-weight">${g.weightage}%</span>
+          </div>
+          <div class="goal-title">${g.title}</div>
+          <div class="goal-desc">${g.description || 'No description'}</div>
+          <div class="goal-meta">
+            <span class="status-badge status-${g.status}">${statusIcon(g.status)} ${g.status}</span>
+            <span class="uom-badge">${g.uom_type}</span>
+            ${g.is_locked ? '<span class="locked-indicator">🔒 locked</span>' : ''}
+            ${g.is_shared ? '<span class="locked-indicator">🔗 shared</span>' : ''}
+          </div>
+          ${score !== null && score !== undefined ? `
+            <div class="progress-bar-wrap">
+              <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${Math.min(score,100)}%;background:${scoreColor}"></div></div>
+              <div class="progress-label"><span>Progress (${latestCheckin.quarter})</span><span style="color:${scoreColor}">${score}%</span></div>
+            </div>` : ''}
+        </div>`;
+      }
+
+      function statusIcon(s) {
+        return { draft: '○', submitted: '⟳', approved: '✓', returned: '↩' }[s] || '';
+      }
+
+      // ── GOAL DETAIL MODAL ─────────────────────────────────────────────────────
+      async function openGoalDetail(goalId) {
+        const g = await api('GET', `/goals/${goalId}`);
+        const isOwner = g.owner_id === currentUser.id;
+        const isManagerOrAdmin = ['manager','admin'].includes(currentUser.role);
+
+        let body = `
+          <div class="detail-row"><span class="detail-key">Thrust Area</span><span class="detail-val">${g.thrust_area}</span></div>
+          <div class="detail-row"><span class="detail-key">UoM Type</span><span class="detail-val"><span class="uom-badge">${g.uom_type}</span></span></div>
+          <div class="detail-row"><span class="detail-key">Target</span><span class="detail-val" style="font-family:'Space Mono',monospace">${g.target}${g.uom_type === 'min' || g.uom_type === 'max' ? '' : ''}</span></div>
+          <div class="detail-row"><span class="detail-key">Weightage</span><span class="detail-val">${g.weightage}%</span></div>
+          <div class="detail-row"><span class="detail-key">Status</span><span class="detail-val"><span class="status-badge status-${g.status}">${g.status}</span>${g.is_locked ? ' 🔒' : ''}</span></div>
+          ${g.deadline ? `<div class="detail-row"><span class="detail-key">Deadline</span><span class="detail-val">${new Date(g.deadline).toLocaleDateString()}</span></div>` : ''}
+          ${g.description ? `<div class="detail-row"><span class="detail-key">Description</span><span class="detail-val">${g.description}</span></div>` : ''}
+          ${g.manager_comment ? `<div class="alert alert-warning">💬 Manager: ${g.manager_comment}</div>` : ''}
+        `;
+
+        // Check-ins section
+        if (g.checkins?.length) {
+          body += `<div class="separator"></div><div class="card-title" style="margin-bottom:12px">Check-in History</div>`;
+          body += g.checkins.map(c => {
+            const sc = c.progress_score;
+            const col = sc >= 80 ? 'var(--success)' : sc >= 50 ? 'var(--warning)' : 'var(--danger)';
+            return `<div style="background:var(--surface2);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+                <span style="font-family:'Space Mono',monospace;font-weight:700">${c.quarter}</span>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <span class="status-badge status-${c.status === 'not_started' ? 'draft' : c.status === 'on_track' ? 'submitted' : 'approved'}">${c.status.replace('_',' ')}</span>
+                  ${sc !== null ? `<span class="score-pill" style="background:${col}22;color:${col};border:1px solid ${col}44">${sc}%</span>` : ''}
+                </div>
+              </div>
+              ${c.actual_achievement !== null ? `<div style="font-size:12px;color:var(--text2)">Actual: <strong style="color:var(--text)">${c.actual_achievement}</strong> vs Target: ${g.target}</div>` : ''}
+              ${c.manager_comment ? `<div style="font-size:12px;color:var(--text2);margin-top:6px">💬 ${c.manager_comment}</div>` : ''}
+              ${isManagerOrAdmin && g.status === 'approved' ? `<div style="margin-top:8px"><button class="btn btn-ghost btn-sm" onclick="openManagerComment(${g.id},'${c.quarter}')">Add Comment</button></div>` : ''}
+            </div>`;
+          }).join('');
+        }
+
+        // Action buttons
+        body += `<div class="separator"></div><div style="display:flex;gap:8px;flex-wrap:wrap">`;
+        if (isOwner && ['draft','returned'].includes(g.status)) {
+          body += `<button class="btn btn-ghost btn-sm" onclick="openEditGoal(${g.id})">✏️ Edit</button>`;
+          body += `<button class="btn btn-primary btn-sm" onclick="submitGoal(${g.id})">Submit for Approval</button>`;
+        }
+        if (isOwner && g.status === 'approved') {
+          body += `<button class="btn btn-success btn-sm" onclick="openCheckin(${g.id})">📊 Log Achievement</button>`;
+        }
+        if (isManagerOrAdmin && g.status === 'submitted') {
+          body += `<button class="btn btn-success btn-sm" onclick="approveGoal(${g.id})">✅ Approve</button>`;
+          body += `<button class="btn btn-danger btn-sm" onclick="returnGoalPrompt(${g.id})">↩ Return</button>`;
+        }
+        if (currentUser.role === 'admin' && g.is_locked) {
+          body += `<button class="btn btn-warning btn-sm" onclick="unlockGoal(${g.id})">🔓 Unlock</button>`;
+        }
+        body += `</div>`;
+
+        document.getElementById('goal-modal-title').textContent = g.title;
+        document.getElementById('goal-modal-body').innerHTML = body;
+        document.getElementById('goal-modal').classList.remove('hidden');
+      }
+
+      // ── CREATE / EDIT GOAL ────────────────────────────────────────────────────
+      function openCreateGoal() {
+        showGoalForm(null);
+      }
+
+      async function openEditGoal(goalId) {
+        const g = await api('GET', `/goals/${goalId}`);
+        showGoalForm(g);
+      }
+
+      function showGoalForm(g) {
+        const isEdit = !!g;
+        const isShared = !!(g?.is_shared);
+        document.getElementById('edit-goal-title').textContent = isEdit
+          ? (isShared ? 'Edit Shared Goal' : 'Edit Goal')
+          : 'Create New Goal';
+
+        const sharedBanner = isShared ? `
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:16px;font-size:12px;color:var(--text2);display:flex;align-items:center;gap:8px;">
+            <span style="font-size:15px;">🔗</span>
+            <span><strong style="color:var(--text)">Shared goal</strong> — Title, Thrust Area, UoM, Target and Deadline are set by your manager and cannot be changed. You may only adjust your <strong style="color:var(--text)">weightage</strong>.</span>
+          </div>` : '';
+
+        const lockedField = (label, val) => `
+          <div class="form-group">
+            <label>${label}</label>
+            <input type="text" value="${val}" readonly style="background:var(--surface2);color:var(--text2);cursor:not-allowed;opacity:0.75;">
+          </div>`;
+
+        document.getElementById('edit-goal-body').innerHTML = `
+          ${sharedBanner}
+          ${isShared ? lockedField('Thrust Area', g.thrust_area) : `
+          <div class="form-group">
+            <label>Thrust Area *</label>
+            <select id="gf-thrust">
+              ${['Revenue Growth','Customer Success','Operational Efficiency','Learning & Development','Safety','Innovation','Quality'].map(t =>
+                `<option ${g?.thrust_area === t ? 'selected' : ''}>${t}</option>`).join('')}
+            </select>
+          </div>`}
+          ${isShared ? lockedField('Goal Title', g.title) : `
+          <div class="form-group">
+            <label>Goal Title *</label>
+            <input type="text" id="gf-title" value="${g?.title || ''}" placeholder="e.g. Increase Q1 Sales Revenue">
+          </div>`}
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="gf-desc" placeholder="Describe what success looks like..." ${isShared ? 'readonly style="background:var(--surface2);color:var(--text2);cursor:not-allowed;opacity:0.75;"' : ''}>${g?.description || ''}</textarea>
+          </div>
+          <div class="grid-2">
+            ${isShared ? lockedField('Unit of Measurement', {'min':'Min — Higher is Better','max':'Max — Lower is Better','timeline':'Timeline — Date-based','zero':'Zero — Zero = Success'}[g.uom_type]) : `
+            <div class="form-group">
+              <label>Unit of Measurement *</label>
+              <select id="gf-uom" onchange="toggleDeadline()">
+                ${['min','max','timeline','zero'].map(u => `<option value="${u}" ${g?.uom_type === u ? 'selected' : ''}>${uomLabel(u)}</option>`).join('')}
+              </select>
+            </div>`}
+            ${isShared ? lockedField('Target Value', g.target) : `
+            <div class="form-group">
+              <label>Target Value *</label>
+              <input type="number" id="gf-target" value="${g?.target || ''}" placeholder="e.g. 1000000">
+            </div>`}
+          </div>
+          ${isShared && g?.uom_type === 'timeline' ? lockedField('Deadline', g.deadline ? g.deadline.split('T')[0] : '—') : !isShared ? `
+          <div class="form-group" id="deadline-group" style="${g?.uom_type === 'timeline' ? '' : 'display:none'}">
+            <label>Deadline</label>
+            <input type="date" id="gf-deadline" value="${g?.deadline ? g.deadline.split('T')[0] : ''}">
+          </div>` : ''}
+          <div class="form-group">
+            <label>Weightage (%) *${isShared ? ' — only editable field' : ' — min 10%, max 100%'}</label>
+            <input type="number" id="gf-weight" value="${g?.weightage || ''}" min="10" max="100" placeholder="e.g. 30" style="${isShared ? 'border-color:var(--accent);' : ''}">
+            <div style="font-size:11px;color:var(--text2);margin-top:4px">Minimum 10% per goal. Total across all goals must equal 100%.</div>
+          </div>
+          <div id="gf-error" class="alert alert-danger hidden"></div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px">
+            <button class="btn btn-ghost" onclick="closeModal('edit-goal-modal')">Cancel</button>
+            <button class="btn btn-primary" onclick="saveGoal(${g?.id || 'null'}, ${isShared})">${isEdit ? 'Save Changes' : 'Create Goal'}</button>
+          </div>
+        `;
+        document.getElementById('edit-goal-modal').classList.remove('hidden');
+      }
+
+      function uomLabel(u) {
+        return { min: 'Min — Higher is Better', max: 'Max — Lower is Better', timeline: 'Timeline — Date-based', zero: 'Zero — Zero = Success' }[u];
+      }
+
+      function toggleDeadline() {
+        const uom = document.getElementById('gf-uom').value;
+        document.getElementById('deadline-group').style.display = uom === 'timeline' ? '' : 'none';
+      }
+
+      async function saveGoal(goalId, isShared = false) {
+        const errEl = document.getElementById('gf-error');
+        errEl.classList.add('hidden');
+
+        const weightage = parseFloat(document.getElementById('gf-weight').value);
+
+        // For shared goals, only send weightage — all other fields are read-only by BRD
+        let data;
+        if (isShared) {
+          if (isNaN(weightage)) {
+            errEl.textContent = 'Please enter your weightage'; errEl.classList.remove('hidden'); return;
+          }
+          data = { weightage };
+        } else {
+          data = {
+            thrust_area: document.getElementById('gf-thrust').value,
+            title: document.getElementById('gf-title').value,
+            description: document.getElementById('gf-desc').value || null,
+            uom_type: document.getElementById('gf-uom').value,
+            target: parseFloat(document.getElementById('gf-target').value),
+            weightage,
+            deadline: document.getElementById('gf-deadline')?.value ? document.getElementById('gf-deadline').value + 'T00:00:00' : null,
+          };
+          if (!data.title || isNaN(data.target) || isNaN(data.weightage)) {
+            errEl.textContent = 'Please fill all required fields'; errEl.classList.remove('hidden'); return;
+          }
+        }
+
+        if (isNaN(weightage) || weightage < 10) {
+          errEl.textContent = 'Minimum weightage per goal is 10%'; errEl.classList.remove('hidden'); return;
+        }
+        if (weightage > 100) {
+          errEl.textContent = 'Maximum weightage per goal is 100%'; errEl.classList.remove('hidden'); return;
+        }
+
+        try {
+          if (goalId) await api('PUT', `/goals/${goalId}`, data);
+          else await api('POST', '/goals', data);
+          closeModal('edit-goal-modal');
+          toast('Goal saved successfully!', 'success');
+          await renderGoals(document.getElementById('main-content'));
+        } catch(e) {
+          errEl.textContent = e.message; errEl.classList.remove('hidden');
+        }
+      }
+
+      // ── SUBMIT / APPROVE / RETURN ─────────────────────────────────────────────
+      async function submitGoal(goalId) {
+        try {
+          await api('POST', `/goals/${goalId}/submit`);
+          closeModal('goal-modal');
+          toast('Goal submitted for approval!', 'success');
+          await renderGoals(document.getElementById('main-content'));
+        } catch(e) { toast(e.message, 'error'); }
+      }
+
+      async function approveGoal(goalId) {
+        try {
+          await api('POST', `/goals/${goalId}/approve`);
+          closeModal('goal-modal');
+          toast('Goal approved and locked!', 'success');
+          loadNotifications();
+          navigate(document.querySelector('.nav-item.active')?.dataset.page || 'goals');
+        } catch(e) { toast(e.message, 'error'); }
+      }
+
+      async function returnGoalPrompt(goalId) {
+        const comment = prompt('Enter feedback for the employee:');
+        if (!comment) return;
+        try {
+          await api('POST', `/goals/${goalId}/return?comment=${encodeURIComponent(comment)}`);
+          closeModal('goal-modal');
+          toast('Goal returned with feedback', 'info');
+          loadNotifications();
+          navigate(document.querySelector('.nav-item.active')?.dataset.page || 'approvals');
+        } catch(e) { toast(e.message, 'error'); }
+      }
+
+      async function unlockGoal(goalId) {
+        if (!confirm('Unlock this goal for editing?')) return;
+        try {
+          await api('POST', `/goals/${goalId}/unlock`);
+          closeModal('goal-modal');
+          toast('Goal unlocked', 'success');
+        } catch(e) { toast(e.message, 'error'); }
+      }
+
+      // ── CHECKIN ───────────────────────────────────────────────────────────────
+      function openCheckin(goalId) {
+        const g = allGoals.find(x => x.id === goalId);
+        const quarters = ['Q1','Q2','Q3','Q4'];
+        const doneQ = g?.checkins?.map(c => c.quarter) || [];
+
+        document.getElementById('checkin-modal-title').textContent = `Log Achievement — ${g?.title || ''}`;
+        document.getElementById('checkin-modal-body').innerHTML = `
+          <div class="form-group">
+            <label>Quarter *</label>
+            <select id="ci-quarter">
+              ${quarters.map(q => `<option value="${q}" ${doneQ.includes(q) ? '' : ''}>${q}${doneQ.includes(q) ? ' (update)' : ''}</option>`).join('')}
+            </select>
+          </div>
+          ${g?.uom_type === 'timeline' ? `
+            <div class="form-group">
+              <label>Completion Date</label>
+              <input type="date" id="ci-date">
+            </div>` : `
+            <div class="form-group">
+              <label>Actual Achievement</label>
+              <input type="number" id="ci-actual" placeholder="e.g. 850000" step="any">
+            </div>`}
+          <div class="form-group">
+            <label>Status</label>
+            <select id="ci-status">
+              <option value="not_started">Not Started</option>
+              <option value="on_track">On Track</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <div id="ci-error" class="alert alert-danger hidden"></div>
+        `;
+        document.getElementById('checkin-modal-footer').innerHTML = `
+          <button class="btn btn-ghost" onclick="closeModal('checkin-modal')">Cancel</button>
+          <button class="btn btn-success" onclick="saveCheckin(${goalId})">Save Achievement</button>
+        `;
+        document.getElementById('checkin-modal').classList.remove('hidden');
+      }
+
+      async function saveCheckin(goalId) {
+        const quarter = document.getElementById('ci-quarter').value;
+        const status = document.getElementById('ci-status').value;
+        const actualEl = document.getElementById('ci-actual');
+        const dateEl = document.getElementById('ci-date');
+        const errEl = document.getElementById('ci-error');
+        errEl.classList.add('hidden');
+
+        const data = {
+          quarter,
+          status,
+          actual_achievement: actualEl ? parseFloat(actualEl.value) || null : null,
+          actual_date: dateEl?.value ? dateEl.value + 'T00:00:00' : null,
+        };
+
+        try {
+          const g = allGoals.find(x => x.id === goalId);
+          const existing = g?.checkins?.find(c => c.quarter === quarter);
+          if (existing) {
+            await api('PUT', `/goals/${goalId}/checkins/${quarter}`, data);
+          } else {
+            await api('POST', `/goals/${goalId}/checkins`, data);
+          }
+          closeModal('checkin-modal');
+          closeModal('goal-modal');
+          toast('Achievement logged!', 'success');
+          loadNotifications();
+          await renderGoals(document.getElementById('main-content'));
+        } catch(e) {
+          errEl.textContent = e.message; errEl.classList.remove('hidden');
+        }
+      }
+
+      async function openManagerComment(goalId, quarter) {
+        const comment = prompt(`Add check-in comment for ${quarter}:`);
+        if (!comment) return;
+        try {
+          await api('POST', `/goals/${goalId}/checkins/${quarter}/comment`, { manager_comment: comment });
+          toast('Comment saved', 'success');
+          loadNotifications();
+          openGoalDetail(goalId);
+        } catch(e) { toast(e.message, 'error'); }
+      }
+
+      // ── APPROVALS PAGE ────────────────────────────────────────────────────────
+      async function renderApprovals(el) {
+        const goals = await api('GET', '/goals?status=submitted');
+        el.innerHTML = `
+          <div class="page-header"><h2>Pending Approvals</h2><p>Review and approve submitted goal sheets</p></div>
+          ${!goals.length ? '<div class="empty-state"><div class="empty-icon">✅</div><h3>All clear!</h3><p>No goals pending approval</p></div>' : ''}
+          <div class="card">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Employee</th><th>Goal</th><th>Thrust Area</th><th>Target</th><th>UoM</th><th>Weight</th><th>Actions</th></tr></thead>
+                <tbody>
+                  ${goals.map(g => `
+                    <tr>
+                      <td><strong>${g.owner?.name || '—'}</strong><br><span style="color:var(--text2);font-size:11px">${g.owner?.department || ''}</span></td>
+                      <td>${g.title}</td>
+                      <td><span style="font-size:11px;color:var(--accent2)">${g.thrust_area}</span></td>
+                      <td style="font-family:'Space Mono',monospace">${g.target}</td>
+                      <td><span class="uom-badge">${g.uom_type}</span></td>
+                      <td>${g.weightage}%</td>
+                      <td>
+                        <div style="display:flex;gap:6px">
+                          <button class="btn btn-ghost btn-sm" onclick="openGoalDetail(${g.id})">View</button>
+                          <button class="btn btn-success btn-sm" onclick="approveGoal(${g.id})">✅</button>
+                          <button class="btn btn-danger btn-sm" onclick="returnGoalPrompt(${g.id})">↩</button>
+                        </div>
+                      </td>
+                    </tr>`).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>`;
+      }
+
+      // ── TEAM PAGE ─────────────────────────────────────────────────────────────
+      async function renderTeam(el) {
+        const me = await api('GET', '/users/me');
+        const team = me.direct_reports || [];
+
+        el.innerHTML = `
+          <div class="page-header"><h2>Team Overview</h2><p>Your direct reports and their goal progress</p></div>
+          ${!team.length ? '<div class="empty-state"><div class="empty-icon">👥</div><h3>No direct reports</h3></div>' : ''}
+          <div class="goals-grid">
+            ${team.map(m => `
+              <div class="card" style="cursor:pointer" onclick="viewMemberGoals(${m.id}, '${m.name}')">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+                  <div class="avatar avatar-employee" style="width:40px;height:40px;font-size:14px">${m.name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase()}</div>
+                  <div>
+                    <div style="font-weight:600">${m.name}</div>
+                    <div style="font-size:12px;color:var(--text2)">${m.department || 'No dept'} · ${m.email}</div>
+                  </div>
+                </div>
+                <div class="btn btn-ghost btn-sm btn-full">View Goals →</div>
+              </div>`).join('')}
+          </div>`;
+      }
+
+      async function viewMemberGoals(userId, name) {
+        const goals = await api('GET', `/goals?owner_id=${userId}`);
+        allGoals = goals;
+        const el = document.getElementById('main-content');
+        el.innerHTML = `
+          <div class="page-header" style="display:flex;justify-content:space-between;align-items:center">
+            <div><h2>${name}'s Goals</h2><p>${goals.length} goals</p></div>
+            <button class="btn btn-ghost" onclick="renderTeam(document.getElementById('main-content'))">← Back to Team</button>
+          </div>
+          <div class="goals-grid">${goals.map(goalCard).join('')}</div>`;
+      }
+
+      // ── ADMIN PAGE ────────────────────────────────────────────────────────────
+      async function renderAdmin(el) {
+        const users = await api('GET', '/users');
+        el.innerHTML = `
+          <div class="page-header"><h2>Admin Panel</h2><p>Manage users, cycles, and system configuration</p></div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">All Users</div>
+              <button class="btn btn-primary btn-sm" onclick="openCreateUser()">+ Add User</button>
+            </div>
+            <div class="table-wrap"><table>
+              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Department</th><th>Manager</th><th>Status</th></tr></thead>
+              <tbody>
+                ${users.map(u => `
+                  <tr>
+                    <td><strong>${u.name}</strong></td>
+                    <td style="color:var(--text2);font-size:12px">${u.email}</td>
+                    <td><span class="role-badge role-${u.role}">${u.role}</span></td>
+                    <td>${u.department || '—'}</td>
+                    <td>${users.find(x => x.id === u.manager_id)?.name || '—'}</td>
+                    <td><span style="color:${u.is_active ? 'var(--success)' : 'var(--danger)'}">${u.is_active ? 'Active' : 'Inactive'}</span></td>
+                  </tr>`).join('')}
+              </tbody>
+            </table></div>
+          </div>
+          <div style="margin-top:20px" class="card">
+            <div class="card-header"><div class="card-title">📅 Check-in Schedule</div></div>
+            <div class="table-wrap"><table>
+              <thead><tr><th>Period</th><th>Window</th><th>Action</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Goal Setting</strong></td><td>May 1st</td><td>Goal Creation, Submission & Approval</td></tr>
+                <tr><td><strong>Q1 Check-in</strong></td><td>July</td><td>Progress Update — Planned vs. Actual</td></tr>
+                <tr><td><strong>Q2 Check-in</strong></td><td>October</td><td>Progress Update — Planned vs. Actual</td></tr>
+                <tr><td><strong>Q3 Check-in</strong></td><td>January</td><td>Progress Update — Planned vs. Actual</td></tr>
+                <tr><td><strong>Q4 / Annual</strong></td><td>March / April</td><td>Final Achievement Capture</td></tr>
+              </tbody>
+            </table></div>
+          </div>`;
+      }
+
+      function openCreateUser() {
+        document.getElementById('edit-goal-title').textContent = 'Add New User';
+        document.getElementById('edit-goal-body').innerHTML = `
+          <div class="form-group"><label>Full Name *</label><input type="text" id="nu-name" placeholder="John Doe"></div>
+          <div class="form-group"><label>Email *</label><input type="email" id="nu-email" placeholder="john@company.com"></div>
+          <div class="form-group"><label>Password *</label><input type="password" id="nu-pw" placeholder="min 6 chars"></div>
+          <div class="grid-2">
+            <div class="form-group"><label>Role *</label>
+              <select id="nu-role"><option value="employee">Employee</option><option value="manager">Manager</option><option value="admin">Admin</option></select>
+            </div>
+            <div class="form-group"><label>Department</label><input type="text" id="nu-dept" placeholder="Engineering"></div>
+          </div>
+          <div id="nu-error" class="alert alert-danger hidden"></div>
+          <div style="display:flex;gap:10px;justify-content:flex-end">
+            <button class="btn btn-ghost" onclick="closeModal('edit-goal-modal')">Cancel</button>
+            <button class="btn btn-primary" onclick="createUser()">Create User</button>
+          </div>`;
+        document.getElementById('edit-goal-modal').classList.remove('hidden');
+      }
+
+      async function createUser() {
+        const data = {
+          name: document.getElementById('nu-name').value,
+          email: document.getElementById('nu-email').value,
+          password: document.getElementById('nu-pw').value,
+          role: document.getElementById('nu-role').value,
+          department: document.getElementById('nu-dept').value || null,
+        };
+        const errEl = document.getElementById('nu-error');
+        errEl.classList.add('hidden');
+        try {
+          await api('POST', '/users', data);
+          closeModal('edit-goal-modal');
+          toast('User created!', 'success');
+          await renderAdmin(document.getElementById('main-content'));
+        } catch(e) { errEl.textContent = e.message; errEl.classList.remove('hidden'); }
+      }
+
+      // ── REPORTS PAGE ──────────────────────────────────────────────────────────
+      async function renderReports(el) {
+        let rows = [];
+        try { rows = await api('GET', '/reports/achievement'); } catch(e) {}
+
+        el.innerHTML = `
+          <div class="page-header" style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div><h2>Achievement Report</h2><p>Planned vs. actual for all approved goals</p></div>
+            <button class="btn btn-primary" onclick="downloadCSV()">⬇ Export CSV</button>
+          </div>
+          <div class="card">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Employee</th><th>Department</th><th>Goal</th><th>Thrust Area</th><th>UoM</th><th>Target</th><th>Quarter</th><th>Actual</th><th>Score</th><th>Status</th></tr></thead>
+                <tbody>
+                  ${rows.length ? rows.map(r => {
+                    const sc = r.progress_score;
+                    const col = sc >= 80 ? 'var(--success)' : sc >= 50 ? 'var(--warning)' : sc > 0 ? 'var(--danger)' : 'var(--text3)';
+                    return `<tr>
+                      <td><strong>${r.employee_name}</strong></td>
+                      <td style="color:var(--text2);font-size:12px">${r.department}</td>
+                      <td>${r.goal_title}</td>
+                      <td><span style="font-size:11px;color:var(--accent2)">${r.thrust_area}</span></td>
+                      <td><span class="uom-badge">${r.uom_type}</span></td>
+                      <td style="font-family:'Space Mono',monospace">${r.target}</td>
+                      <td style="font-family:'Space Mono',monospace">${r.quarter}</td>
+                      <td style="font-family:'Space Mono',monospace">${r.actual ?? '—'}</td>
+                      <td>${sc !== null ? `<span class="score-pill" style="background:${col}22;color:${col};border:1px solid ${col}44">${sc}%</span>` : '—'}</td>
+                      <td><span class="status-badge status-${r.status === 'not_started' ? 'draft' : r.status === 'on_track' ? 'submitted' : r.status === 'completed' ? 'approved' : 'draft'}">${r.status.replace('_',' ')}</span></td>
+                    </tr>`;
+                  }).join('') : '<tr><td colspan="10" style="text-align:center;color:var(--text2);padding:32px">No approved goals with check-in data yet</td></tr>'}
+                </tbody>
+              </table>
+            </div>
+          </div>`;
+      }
+
+      async function downloadCSV() {
+        try {
+          const res = await fetch(API + '/reports/achievement?format=csv', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = 'achievement_report.csv'; a.click();
+          toast('CSV downloaded!', 'success');
+        } catch(e) { toast('Download failed', 'error'); }
+      }
+
+      // ── Utilities ─────────────────────────────────────────────────────────────
+      function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+      function toast(msg, type = 'info') {
+        const el = document.createElement('div');
+        el.className = `toast ${type}`;
+        el.textContent = msg;
+        document.getElementById('toast-container').appendChild(el);
+        setTimeout(() => el.remove(), 3500);
+      }
+
+      function timeAgo(dateStr) {
+        const diff = Date.now() - new Date(dateStr).getTime();
+        const mins = Math.floor(diff / 60000);
+        if (mins < 1) return 'just now';
+        if (mins < 60) return `${mins}m ago`;
+        const hrs = Math.floor(mins / 60);
+        if (hrs < 24) return `${hrs}h ago`;
+        return `${Math.floor(hrs / 24)}d ago`;
+      }
+
+      // Close panels on outside click
+      document.addEventListener('click', (e) => {
+        const panel = document.getElementById('notif-panel');
+        if (!panel.classList.contains('hidden') &&
+            !panel.contains(e.target) &&
+            !document.getElementById('notif-btn').contains(e.target)) {
+          panel.classList.add('hidden');
+        }
+      });
+
+      // ── ENHANCED ANALYTICS PAGE ────────────────────────────────────────────────
+      async function renderAnalytics(el) {
+        const [qoq, thrust, mgr, dist, heatmap] = await Promise.all([
+          api('GET', '/analytics/qoq'),
+          api('GET', '/analytics/thrust-areas'),
+          currentUser.role === 'admin' ? api('GET', '/analytics/manager-effectiveness') : Promise.resolve([]),
+          api('GET', '/analytics/goal-distribution'),
+          api('GET', '/analytics/department-heatmap'),
+        ]);
+
+        const maxScore = Math.max(...qoq.map(q => q.avg_score), 1);
+        const quarters = ['Q1','Q2','Q3','Q4'];
+
+        // Donut-style UoM distribution
+        const uomColors = { min: 'var(--accent)', max: 'var(--accent2)', timeline: 'var(--accent4)', zero: 'var(--accent3)' };
+        const uomLabels = { min: 'Min (↑ better)', max: 'Max (↓ better)', timeline: 'Timeline', zero: 'Zero target' };
+        const totalGoals = dist.total || 1;
+
+        el.innerHTML = `
+          <div class="page-header"><h2>📊 Analytics</h2><p>Quarter-on-quarter trends, heatmaps, and org-wide insights</p></div>
+
+          <!-- Row 1: QoQ + Distribution -->
+          <div class="grid-2" style="margin-bottom:20px">
+            <div class="card">
+              <div class="card-header"><div class="card-title">📈 QoQ Achievement Trend</div></div>
+              ${!qoq.length ? '<div class="empty-state" style="padding:20px"><p>No check-in data yet</p></div>' : `
+                <div class="bar-chart">
+                  ${qoq.map(q => {
+                    const h = Math.max((q.avg_score / maxScore) * 140, 4);
+                    const col = q.avg_score >= 80 ? 'var(--success)' : q.avg_score >= 50 ? 'var(--warning)' : 'var(--danger)';
+                    return `<div class="bar-group">
+                      <div class="bar-val">${q.avg_score}%</div>
+                      <div class="bar" style="height:${h}px;background:${col}"></div>
+                      <div class="bar-label">${q.quarter}<br><span style="font-size:10px;color:var(--text3)">${q.count} entries</span></div>
+                    </div>`;
+                  }).join('')}
+                </div>`}
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-title">🗂️ Goal Distribution by UoM</div></div>
+              <div style="padding:8px 0">
+                ${Object.entries(dist.by_uom_type || {}).map(([uom, count]) => {
+                  const pct = Math.round(count/totalGoals*100);
+                  const col = uomColors[uom] || 'var(--accent)';
+                  return `<div style="margin-bottom:14px">
+                    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+                      <span style="color:${col};font-weight:600">${uomLabels[uom]||uom}</span>
+                      <span style="color:var(--text2)">${count} goals (${pct}%)</span>
+                    </div>
+                    <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${pct}%;background:${col}"></div></div>
+                  </div>`;
+                }).join('')}
+                <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+                  ${Object.entries(dist.by_status || {}).map(([st,cnt]) => {
+                    const col = st==='approved'?'var(--success)':st==='submitted'?'var(--info)':st==='returned'?'var(--danger)':'var(--text2)';
+                    return `<span style="font-size:11px;padding:4px 10px;border-radius:12px;background:${col}22;color:${col};border:1px solid ${col}44">${st}: ${cnt}</span>`;
+                  }).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Thrust Areas -->
+          <div class="card" style="margin-bottom:20px">
+            <div class="card-header"><div class="card-title">🎯 Goal Distribution by Thrust Area</div></div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;padding:4px 0">
+              ${thrust.map((t,i) => {
+                const colors = ['var(--accent)','var(--accent2)','var(--accent4)','var(--accent3)','#a78bfa','#fb923c'];
+                const col = colors[i % colors.length];
+                const approvedPct = t.total ? Math.round(t.approved/t.total*100) : 0;
+                return `<div style="padding:14px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">
+                  <div style="font-weight:600;font-size:13px;margin-bottom:8px;color:${col}">${t.thrust_area}</div>
+                  <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${t.total} goals · avg ${t.avg_weightage}% weight · ${approvedPct}% approved</div>
+                  <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${approvedPct}%;background:${col}"></div></div>
+                </div>`;
+              }).join('')}
+            </div>
+          </div>
+
+          <!-- Row 3: Dept Heatmap -->
+          <div class="card" style="margin-bottom:20px">
+            <div class="card-header"><div class="card-title">🔥 Check-in Completion Heatmap (by Department × Quarter)</div></div>
+            ${!heatmap.length ? '<div class="empty-state" style="padding:20px"><p>No approved goals with check-in data</p></div>' : `
+            <div class="table-wrap"><table>
+              <thead><tr><th>Department</th>${quarters.map(q=>`<th style="text-align:center">${q}</th>`).join('')}</tr></thead>
+              <tbody>
+                ${heatmap.map(row => `<tr>
+                  <td><strong>${row.department}</strong></td>
+                  ${quarters.map(q => {
+                    const v = row[q] || 0;
+                    const bg = v>=80?'var(--success)':v>=50?'var(--warning)':v>0?'var(--danger)':'var(--surface2)';
+                    return `<td style="text-align:center"><span style="display:inline-block;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600;background:${bg}22;color:${bg};border:1px solid ${bg}33;min-width:48px">${v}%</span></td>`;
+                  }).join('')}
+                </tr>`).join('')}
+              </tbody>
+            </table></div>`}
+            <div style="display:flex;gap:16px;align-items:center;padding:12px 0 0;font-size:11px;color:var(--text2)">
+              <span>Legend:</span>
+              <span style="color:var(--success)">● ≥80% On Track</span>
+              <span style="color:var(--warning)">● 50–79% At Risk</span>
+              <span style="color:var(--danger)">● &lt;50% Behind</span>
+              <span style="color:var(--text3)">● No data</span>
+            </div>
+          </div>
+
+          <!-- Row 4: Manager Effectiveness -->
+          ${currentUser.role === 'admin' && mgr.length ? `
+          <div class="card">
+            <div class="card-header"><div class="card-title">👔 Manager Effectiveness Dashboard</div></div>
+            <div class="table-wrap"><table>
+              <thead><tr><th>Manager</th><th>Team</th><th>Approved</th><th>Pending</th><th>Commented Check-ins</th><th>Engagement</th></tr></thead>
+              <tbody>
+                ${mgr.map(m => {
+                  const engagement = m.approved_goals ? Math.round(m.checkins_commented/m.approved_goals*100) : 0;
+                  const col = engagement>=70?'var(--success)':engagement>=40?'var(--warning)':'var(--danger)';
+                  return `<tr>
+                    <td><strong>${m.manager}</strong></td>
+                    <td>${m.team_size} members</td>
+                    <td><span style="color:var(--success)">${m.approved_goals}</span></td>
+                    <td><span style="color:${m.pending_approvals>0?'var(--warning)':'var(--text2)'}">${m.pending_approvals}</span></td>
+                    <td>${m.checkins_commented}</td>
+                    <td><div class="progress-bar-track" style="min-width:80px"><div class="progress-bar-fill" style="width:${engagement}%;background:${col}"></div></div><span style="font-size:11px;color:${col}">${engagement}%</span></td>
+                  </tr>`;
+                }).join('')}
+              </tbody>
+            </table></div>
+          </div>` : ''}`;
+      }
+
+      // ── ESCALATION PAGE ───────────────────────────────────────────────────────
+      async function renderEscalation(el) {
+        const [rules, logs, stats] = await Promise.all([
+          api('GET', '/escalation/rules'),
+          api('GET', '/escalation/logs'),
+          api('GET', '/escalation/stats'),
+        ]);
+
+        const ruleTypeLabels = {
+          goal_not_submitted: '📝 Goal Not Submitted',
+          goal_not_approved: '✅ Goal Not Approved',
+          checkin_not_done: '📅 Check-in Not Done'
+        };
+
+        el.innerHTML = `
+          <div class="page-header" style="display:flex;justify-content:space-between;align-items:center">
+            <div><h2>⚠️ Escalation Module</h2><p>Rule-based escalation engine for tracking compliance</p></div>
+            <div style="display:flex;gap:10px">
+              <button class="btn btn-primary" onclick="runEscalationEngine()">▶ Run Engine Now</button>
+              <button class="btn btn-ghost" onclick="openAddEscalationRule()">+ Add Rule</button>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="stats-grid" style="margin-bottom:20px">
+            <div class="stat-card"><div class="stat-value">${stats.total}</div><div class="stat-label">Total Escalations</div></div>
+            <div class="stat-card"><div class="stat-value" style="color:var(--warning)">${stats.open}</div><div class="stat-label">Open</div></div>
+            <div class="stat-card"><div class="stat-value" style="color:var(--success)">${stats.resolved}</div><div class="stat-label">Resolved</div></div>
+            <div class="stat-card"><div class="stat-value">${rules.length}</div><div class="stat-label">Active Rules</div></div>
+          </div>
+
+          <!-- Rules -->
+          <div class="card" style="margin-bottom:20px">
+            <div class="card-header"><div class="card-title">📋 Escalation Rules</div></div>
+            ${!rules.length ? '<div class="empty-state" style="padding:20px"><p>No rules defined yet</p></div>' :
+              rules.map(r => `
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+                  <div>
+                    <div style="font-weight:600;font-size:13px">${r.name}</div>
+                    <div style="font-size:12px;color:var(--text2);margin-top:2px">${ruleTypeLabels[r.rule_type]||r.rule_type} · triggers after <strong>${r.trigger_days}</strong> days</div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px">
+                    <span style="font-size:11px;padding:3px 10px;border-radius:10px;background:${r.is_active?'var(--success)22':'var(--text3)22'};color:${r.is_active?'var(--success)':'var(--text3)'}">
+                      ${r.is_active ? '● Active' : '○ Inactive'}
+                    </span>
+                    <button class="btn btn-ghost btn-sm" onclick="editEscalationRule(${r.id},'${r.name}','${r.rule_type}',${r.trigger_days},${r.is_active})">Edit</button>
+                    <button class="btn btn-sm" style="background:var(--danger)22;color:var(--danger);border:none" onclick="deleteEscalationRule(${r.id})">Delete</button>
+                  </div>
+                </div>`).join('')
+            }
+          </div>
+
+          <!-- Logs -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">📜 Escalation Log</div>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-ghost btn-sm" onclick="filterEscalation('open')">Open</button>
+                <button class="btn btn-ghost btn-sm" onclick="filterEscalation('resolved')">Resolved</button>
+                <button class="btn btn-ghost btn-sm" onclick="filterEscalation('')">All</button>
+              </div>
+            </div>
+            <div id="escal-log-body">
+              ${renderEscalationLogs(logs, rules)}
+            </div>
+          </div>`;
+
+        window._escalRules = rules;
+        window._escalLogs = logs;
+      }
+
+      function renderEscalationLogs(logs, rules) {
+        if (!logs.length) return '<div class="empty-state" style="padding:20px"><p>No escalations triggered yet. Run the engine to check.</p></div>';
+        const ruleMap = {};
+        (rules||window._escalRules||[]).forEach(r => ruleMap[r.id] = r);
+        const levelLabels = {1:'Employee',2:'Manager',3:'HR/Skip-Level'};
+        return `<div class="table-wrap"><table>
+          <thead><tr><th>Rule</th><th>User ID</th><th>Level</th><th>Status</th><th>Message</th><th>Date</th><th>Action</th></tr></thead>
+          <tbody>
+            ${logs.map(l => `<tr>
+              <td style="font-size:12px">${ruleMap[l.rule_id]?.name || l.rule_id}</td>
+              <td style="color:var(--text2)">#${l.user_id}</td>
+              <td><span style="font-size:11px;color:var(--accent)">${levelLabels[l.level]||l.level}</span></td>
+              <td><span style="font-size:11px;padding:3px 8px;border-radius:8px;background:${l.status==='open'?'var(--warning)22':'var(--success)22'};color:${l.status==='open'?'var(--warning)':'var(--success)'}">${l.status}</span></td>
+              <td style="font-size:12px;max-width:300px">${l.message}</td>
+              <td style="font-size:11px;color:var(--text2)">${timeAgo(l.created_at)}</td>
+              <td>${l.status==='open'?`<button class="btn btn-sm" style="background:var(--success)22;color:var(--success);border:none" onclick="resolveEscalation(${l.id})">Resolve</button>`:'—'}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table></div>`;
+      }
+
+      async function runEscalationEngine() {
+        try {
+          const res = await api('POST', '/escalation/run');
+          toast(`Engine ran: ${res.triggered} escalation(s) triggered`, res.triggered > 0 ? 'warning' : 'success');
+          await renderEscalation(document.getElementById('main-content'));
+        } catch(e) { toast('Engine error: ' + e.message, 'error'); }
+      }
+
+      async function resolveEscalation(id) {
+        try {
+          await api('POST', `/escalation/logs/${id}/resolve`);
+          toast('Escalation resolved', 'success');
+          await renderEscalation(document.getElementById('main-content'));
+        } catch(e) { toast(e.message, 'error'); }
+      }
+
+      async function filterEscalation(status) {
+        try {
+          const logs = await api('GET', `/escalation/logs${status ? '?status='+status : ''}`);
+          document.getElementById('escal-log-body').innerHTML = renderEscalationLogs(logs, window._escalRules||[]);
+        } catch(e) {}
+      }
+
+      async function deleteEscalationRule(id) {
+        if (!confirm('Delete this rule?')) return;
+        try {
+          await api('DELETE', `/escalation/rules/${id}`);
+          toast('Rule deleted', 'success');
+          await renderEscalation(document.getElementById('main-content'));
+        } catch(e) { toast(e.message, 'error'); }
+      }
+
+      function openAddEscalationRule() {
+        showEscalationRuleModal();
+      }
+
+      function editEscalationRule(id, name, ruleType, days, isActive) {
+        showEscalationRuleModal({id, name, rule_type: ruleType, trigger_days: days, is_active: isActive});
+      }
+
+      function showEscalationRuleModal(rule = null) {
+        document.getElementById('edit-goal-title').textContent = rule ? 'Edit Escalation Rule' : 'Add Escalation Rule';
+        document.getElementById('edit-goal-body').innerHTML = `
+          <div class="form-group"><label>Rule Name *</label><input type="text" id="er-name" value="${rule?.name||''}" placeholder="e.g. Goal Not Submitted (7 days)"></div>
+          <div class="form-group"><label>Rule Type *</label>
+            <select id="er-type">
+              <option value="goal_not_submitted" ${rule?.rule_type==='goal_not_submitted'?'selected':''}>Goal Not Submitted</option>
+              <option value="goal_not_approved" ${rule?.rule_type==='goal_not_approved'?'selected':''}>Goal Not Approved</option>
+              <option value="checkin_not_done" ${rule?.rule_type==='checkin_not_done'?'selected':''}>Check-in Not Done</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Trigger After (days) *</label><input type="number" id="er-days" value="${rule?.trigger_days||7}" min="1" max="90"></div>
+          <div class="form-group" style="display:flex;align-items:center;gap:10px">
+            <input type="checkbox" id="er-active" ${(rule?.is_active!==false)?'checked':''} style="width:auto">
+            <label style="margin:0">Active</label>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+            <button class="btn btn-ghost" onclick="closeModal('edit-goal-modal')">Cancel</button>
+            <button class="btn btn-primary" onclick="saveEscalationRule(${rule?.id||'null'})">Save Rule</button>
+          </div>`;
+        document.getElementById('edit-goal-modal').classList.remove('hidden');
+      }
+
+      async function saveEscalationRule(id) {
+        const data = {
+          name: document.getElementById('er-name').value.trim(),
+          rule_type: document.getElementById('er-type').value,
+          trigger_days: parseInt(document.getElementById('er-days').value),
+          is_active: document.getElementById('er-active').checked
+        };
+        if (!data.name) { toast('Rule name required', 'error'); return; }
+        try {
+          if (id) {
+            await api('PUT', `/escalation/rules/${id}`, data);
+            toast('Rule updated', 'success');
+          } else {
+            await api('POST', '/escalation/rules', data);
+            toast('Rule created', 'success');
+          }
+          closeModal('edit-goal-modal');
+          await renderEscalation(document.getElementById('main-content'));
+        } catch(e) { toast(e.message, 'error'); }
+      }
+
+      // ── INTEGRATIONS PAGE ─────────────────────────────────────────────────────
+      async function renderIntegrations(el) {
+        const [stats, logs] = await Promise.all([
+          api('GET', '/integrations/stats'),
+          api('GET', '/integrations/email-logs?limit=20'),
+        ]);
+
+        const settings = stats.settings || {};
+
+        el.innerHTML = `
+          <div class="page-header"><h2>📡 Email & Teams Integration</h2><p>Configure notifications and view delivery logs</p></div>
+
+          <!-- Stats Cards -->
+          <div class="stats-grid" style="margin-bottom:20px">
+            <div class="stat-card"><div class="stat-value">${stats.total_notifications}</div><div class="stat-label">Total Sent</div></div>
+            <div class="stat-card"><div class="stat-value" style="color:var(--info)">${stats.by_channel?.email||0}</div><div class="stat-label">📧 Email</div></div>
+            <div class="stat-card"><div class="stat-value" style="color:var(--accent2)">${stats.by_channel?.teams||0}</div><div class="stat-label">💬 Teams</div></div>
+            <div class="stat-card"><div class="stat-value" style="color:var(--success)">${Object.keys(stats.by_event_type||{}).length}</div><div class="stat-label">Event Types</div></div>
+          </div>
+
+          <div class="grid-2" style="margin-bottom:20px">
+            <!-- Email Config -->
+            <div class="card">
+              <div class="card-header"><div class="card-title">📧 Email Configuration (SMTP)</div></div>
+              <div class="form-group"><label>SMTP Host</label><input type="text" id="cfg-smtp-host" value="${settings.smtp_host||''}" placeholder="smtp.company.com"></div>
+              <div class="form-group"><label>SMTP Port</label><input type="number" id="cfg-smtp-port" value="${settings.smtp_port||587}" placeholder="587"></div>
+              <div style="margin-bottom:12px">
+                <div style="font-size:12px;color:var(--text2);font-weight:600;margin-bottom:8px">Notify On:</div>
+                ${[
+                  ['notify_on_submission','Goal Submission'],
+                  ['notify_on_approval','Goal Approval'],
+                  ['notify_on_rejection','Goal Rejection'],
+                  ['notify_on_checkin','Check-in Update']
+                ].map(([key,label]) => `
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+                    <input type="checkbox" id="cfg-${key}" ${settings[key]?'checked':''} style="width:auto">
+                    <label style="margin:0;font-size:13px">${label}</label>
+                  </div>`).join('')}
+              </div>
+              <div style="display:flex;gap:10px">
+                <button class="btn btn-primary btn-sm" onclick="saveIntegrationSettings()">Save Settings</button>
+                <button class="btn btn-ghost btn-sm" onclick="testEmailNotif()">Send Test Email</button>
+              </div>
+            </div>
+
+            <!-- Teams Config -->
+            <div class="card">
+              <div class="card-header"><div class="card-title">💬 Microsoft Teams Bot</div></div>
+              <div class="form-group"><label>Incoming Webhook URL</label>
+                <input type="text" id="cfg-teams-webhook" value="${settings.teams_webhook_url||''}" placeholder="https://company.webhook.office.com/...">
+              </div>
+              <div style="padding:14px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:16px">
+                <div style="font-weight:600;font-size:13px;margin-bottom:8px">🔗 Deep Link Support</div>
+                <div style="font-size:12px;color:var(--text2)">Teams notifications include deep links that navigate users directly to the relevant goal sheet in the portal. Adaptive cards show goal title, status, and a <em>View Goal</em> action button.</div>
+              </div>
+              <div style="padding:14px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:16px">
+                <div style="font-weight:600;font-size:13px;margin-bottom:8px">📨 Adaptive Card Preview</div>
+                <div style="background:var(--surface);border-radius:8px;border:1px solid var(--border);padding:12px;font-size:12px">
+                  <div style="color:var(--accent);font-weight:700;margin-bottom:4px">⬡ AtomQuest Goal Portal</div>
+                  <div style="font-weight:600;margin-bottom:4px">Arjun Reddy submitted a goal</div>
+                  <div style="color:var(--text2);margin-bottom:8px">Goal: "Increase Q1 Sales Revenue" · Status: Submitted</div>
+                  <span style="background:var(--accent);color:white;padding:4px 12px;border-radius:6px;font-size:11px">View Goal →</span>
+                </div>
+              </div>
+              <div style="display:flex;gap:10px">
+                <button class="btn btn-primary btn-sm" onclick="saveIntegrationSettings()">Save Webhook</button>
+                <button class="btn btn-ghost btn-sm" onclick="testTeamsNotif()">Test Teams Card</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Event breakdown -->
+          <div class="card" style="margin-bottom:20px">
+            <div class="card-header"><div class="card-title">📊 Notifications by Event Type</div></div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px;padding:4px 0">
+              ${Object.entries(stats.by_event_type||{}).map(([et,cnt]) => {
+                const icons = {goal_submitted:'📝',goal_approved:'✅',goal_returned:'↩️',checkin_updated:'📅',test:'🧪',teams_test:'💬'};
+                return `<div style="padding:10px 16px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border);text-align:center">
+                  <div style="font-size:20px">${icons[et]||'🔔'}</div>
+                  <div style="font-size:13px;font-weight:600">${cnt}</div>
+                  <div style="font-size:11px;color:var(--text2)">${et.replace(/_/g,' ')}</div>
+                </div>`;
+              }).join('')}
+              ${!Object.keys(stats.by_event_type||{}).length ? '<div style="color:var(--text2);font-size:13px">No notifications sent yet. Try sending a test.</div>' : ''}
+            </div>
+          </div>
+
+          <!-- Notification Logs -->
+          <div class="card">
+            <div class="card-header"><div class="card-title">📬 Recent Notification Log</div></div>
+            ${!logs.length ? '<div class="empty-state" style="padding:20px"><p>No notifications logged yet</p></div>' :
+              `<div class="table-wrap"><table>
+                <thead><tr><th>Channel</th><th>Recipient</th><th>Subject</th><th>Event</th><th>Status</th><th>Time</th></tr></thead>
+                <tbody>
+                  ${logs.map(l => `<tr>
+                    <td>${l.channel==='email'?'📧 Email':'💬 Teams'}</td>
+                    <td style="color:var(--text2);font-size:12px">#${l.recipient_id}</td>
+                    <td style="font-size:12px">${l.subject}</td>
+                    <td style="font-size:11px;color:var(--accent2)">${l.event_type||'—'}</td>
+                    <td><span style="font-size:11px;padding:2px 8px;border-radius:8px;background:var(--success)22;color:var(--success)">${l.status}</span></td>
+                    <td style="font-size:11px;color:var(--text2)">${timeAgo(l.sent_at)}</td>
+                  </tr>`).join('')}
+                </tbody>
+              </table></div>`}
+          </div>`;
+      }
+
+      async function saveIntegrationSettings() {
+        const data = {
+          smtp_host: document.getElementById('cfg-smtp-host').value,
+          smtp_port: parseInt(document.getElementById('cfg-smtp-port').value)||587,
+          teams_webhook_url: document.getElementById('cfg-teams-webhook').value,
+          notify_on_submission: document.getElementById('cfg-notify_on_submission').checked,
+          notify_on_approval: document.getElementById('cfg-notify_on_approval').checked,
+          notify_on_rejection: document.getElementById('cfg-notify_on_rejection').checked,
+          notify_on_checkin: document.getElementById('cfg-notify_on_checkin').checked,
+        };
+        try {
+          await api('PUT', '/integrations/email-settings', data);
+          toast('Integration settings saved!', 'success');
+        } catch(e) { toast(e.message, 'error'); }
+      }
+
+      async function testEmailNotif() {
+        try {
+          await api('POST', '/integrations/test-email');
+          toast('Test email logged & sent!', 'success');
+          await renderIntegrations(document.getElementById('main-content'));
+        } catch(e) { toast(e.message, 'error'); }
+      }
+
+      async function testTeamsNotif() {
+        try {
+          await api('POST', '/integrations/test-teams');
+          toast('Teams test card dispatched!', 'success');
+          await renderIntegrations(document.getElementById('main-content'));
+        } catch(e) { toast(e.message, 'error'); }
+      }
+
+      // ── Theme Toggle ──────────────────────────────────────────────────────────
+      function toggleTheme() {
+        const isLight = document.documentElement.classList.toggle('light');
+        document.getElementById('theme-icon').textContent = isLight ? '☀️' : '🌙';
+        localStorage.setItem('aq_theme', isLight ? 'light' : 'dark');
+      }
+
+      // Apply saved theme on load
+      (function() {
+        const saved = localStorage.getItem('aq_theme');
+        if (saved === 'light') {
+          document.documentElement.classList.add('light');
+          document.addEventListener('DOMContentLoaded', () => {
+            const icon = document.getElementById('theme-icon');
+            if (icon) icon.textContent = '☀️';
+          });
+        }
+      })();
+
+      // ── Boot ──────────────────────────────────────────────────────────────────
+      async function boot() {
+        if (token && currentUser) {
+          // Verify token is still valid before restoring session
+          try {
+            const me = await api('GET', '/users/me');
+            if (me) {
+              currentUser = me;
+              localStorage.setItem('aq_user', JSON.stringify(currentUser));
+              showApp();
+              return;
+            }
+          } catch(e) {
+            // Token invalid or expired — clear and show login
+            token = null; currentUser = null;
+            localStorage.removeItem('aq_token');
+            localStorage.removeItem('aq_user');
+          }
+        }
+        document.getElementById('login-screen').style.display = 'flex';
+      }
+      boot();
+    </script>
+  </body>
+</html>
