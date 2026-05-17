@@ -12,7 +12,11 @@ from auth import verify_password, create_access_token, get_current_user, hash_pa
 from routers import router
 from services import create_notification
 
-app = FastAPI(title="AtomQuest Goal Portal", version="1.0.0")
+app = FastAPI()
+origins = [
+    "https://atomberg-hackathon-6b4o.onrender.com",
+    "http://localhost:3000", # keeping local dev working
+]
 
 app.add_middleware(
     CORSMiddleware,
