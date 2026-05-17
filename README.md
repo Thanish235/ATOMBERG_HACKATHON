@@ -86,7 +86,7 @@ SQLAlchemy ORM  →  SQLite (atomquest.db)
 ## 📁 Project Structure
 
 ```
-Atomberg_enhanced/
+ATOMBERG_HACKATHON/
 ├── main.py          # FastAPI app, startup seed, auth endpoints
 ├── routers.py       # All API routes (goals, checkins, reports, analytics, escalation)
 ├── models.py        # SQLAlchemy models (User, Goal, Checkin, AuditLog, Notification, Escalation)
