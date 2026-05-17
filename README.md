@@ -1,11 +1,9 @@
-# ⬡ AtomQuest — Goal Setting & Tracking Portal
-### AtomQuest Hackathon 1.0 Submission
+# AtomQuest — Goal Setting & Tracking Portal
+### AtomQuest Hackathon
 
 A full-stack, single-server web portal for employee goal setting, manager approval, quarterly check-ins, and performance analytics.
 
 ---
-
-## 🚀 Quick Start (Local)
 
 ```bash
 # Clone and enter the project
@@ -45,8 +43,6 @@ FastAPI (Uvicorn ASGI)  ←─ main.py · routers.py · auth.py · services.py
         ▼
 SQLAlchemy ORM  →  SQLite (atomquest.db)
 ```
-
-See `AtomQuest_Architecture.pdf` for the full layered diagram.
 
 **Tech Stack:**
 - **Backend:** Python 3.12, FastAPI 0.115, Uvicorn
@@ -102,35 +98,3 @@ Atomberg_enhanced/
 ├── requirements.txt # Python dependencies
 └── run.sh           # One-command startup script
 ```
-
----
-
-## ☁️ Deploying to Railway
-
-1. Push this repo to GitHub
-2. Go to [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub**
-3. Select this repo
-4. Railway auto-detects Python. Set the start command:
-   ```
-   uvicorn main:app --host 0.0.0.0 --port $PORT
-   ```
-5. Click **Deploy** — your live URL appears in ~2 minutes
-
-## ☁️ Deploying to Render
-
-1. Push this repo to GitHub
-2. Go to [render.com](https://render.com) → **New Web Service**
-3. Connect your GitHub repo
-4. Set:
-   - **Build command:** `pip install -r requirements.txt`
-   - **Start command:** `uvicorn main:app --host 0.0.0.0 --port $PORT`
-5. Click **Create Web Service**
-
----
-
-## 📋 Submission Checklist
-
-- [x] Live demo URL (see submission form)
-- [x] Source code repository (this repo)
-- [x] Architecture diagram — `AtomQuest_Architecture.pdf`
-- [x] Login credentials for all 3 roles (see table above)
